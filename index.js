@@ -55,18 +55,23 @@ async function main() {
         // 赋予 argo 可执行权限
         await runCommand('chmod +x /tmp/argo', '');
 
-        // 运行 argo
-        let token = process.env.TOKEN; // 确保你已经设置了环境变量 TOKEN
-        await runCommand(`nohup /tmp/argo tunnel --edge-ip-version auto run --token 6fe21701-bda8-4373-b130-a908c2de3ebd >/dev/null 2>&1 &`, 'argo');
-
         // 下载 web 文件
         await downloadFile('https://github.com/wwrrtt/node/raw/main/web', 'web');
+
+        // 赋予 web 可执行权限
+        await runCommand('chmod +x /tmp/web', '');
 
         // 下载 config.json 文件
         await downloadFile('https://github.com/wwrrtt/node/raw/main/config.json', 'config.json');
 
-        // 运行 web
-        await runCommand('nohup /tmp/web run /tmp/config.json >/dev/null 2>&1 &', 'web');
+        // 下载 start.sh 文件
+        await downloadFile('https://github.com/wwrrtt/node/raw/main/start.sh', 'start.sh');
+
+        // 赋予 start.sh 可执行权限
+        await runCommand('chmod +x /tmp/start.sh', '');
+
+        // 运行 start.sh
+        await runCommand('./start.sh');
 
         // 启动 Express.js 应用
         const app = express();
