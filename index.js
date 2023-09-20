@@ -1,3 +1,4 @@
+const axios = require('axios');
 const fs = require('fs');
 const { exec } = require('child_process');
 const express = require('express');
@@ -9,9 +10,8 @@ const port = 3000;
 
 async function downloadFile(url, filename) {
   const path = `/tmp/${filename}`;
-  await download(url).then(data => {
-    fs.writeFileSync(path, data);
-  });
+  const data = await download(url);
+  fs.writeFileSync(path, data);
 }
 
 async function runCommand(command, processName) {
@@ -80,4 +80,4 @@ async function main() {
   }
 }
 
-await main();
+main();
