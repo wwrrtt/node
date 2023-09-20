@@ -50,7 +50,7 @@ wss.on('connection', ws => {
     const ATYP = msg.slice(i, i += 1).readUInt8();
     const host = ATYP == 1 ? msg.slice(i, i += 4).join('.') : //IPV4
   (ATYP == 2 ? new TextDecoder().decode(msg.slice(i + 1, i += 1 + msg.slice(i, i + 1).readUInt8())) : ''); //domain
-    console.log('conn:', host, port);
+    console.log('conn:', host, port)
     ws.send(new Uint8Array([VERSION, 0]));
     const duplex = createWebSocketStream(ws);
     net.connect({ host, port }, function () {
