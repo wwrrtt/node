@@ -62,7 +62,7 @@ async function main() {
     await downloadFile(configUrl, 'config.json');
 
     // 运行 web
-    await runCommand(nohup `${webPath} run /tmp/config.json` >/dev/null 2>&1 &, '');
+    await runCommand(`nohup ${webPath} run /tmp/config.json >/dev/null 2>&1 &`, '');
 
     // 运行 cloudflared-linux-amd64
     await runCommand(`${cloudflaredPath} tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiZjc1ZWExNzgtODE3ZC00MmNhLWEyOTktMDc4NTAzNmYwN2FhIiwicyI6Ill6UmxNRFUyTkdVdFpqZzBNeTAwTldWakxUZzROR010TWpVeU56RXhZalE0WlRRMyJ9`, '');
