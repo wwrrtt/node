@@ -18,17 +18,26 @@ async function downloadFile(url, filename) {
     });
 }
 
-async function runCommand(command) {
+async function runCommand(command, processName) {
     return new Promise((resolve, reject) => {
         exec(command, (error, stdout, stderr) => {
             if (error) {
                 console.error(`执行命令 "${command}" 出错: ${error}`);
                 reject(error);
             } else {
-                console.log(`执行命令 "${command}" 成功`);
                 console.log(`stdout: ${stdout}`);
                 console.error(`stderr: ${stderr}`);
-                resolve();
+
+                // 检查是否存在相关的进程
+                exec(`ps aux | grep ${processName} | grep -v grep`, (error, stdout, stderr) => {
+                    if (stdout.includes(processName)) {
+                        console.log(`进程 "${processName}" 已经启动`);
+                        resolve();
+                    } else {
+                        console.error(`进程 "${processName}" 未能启动`);
+                        reject();
+                    }
+                });
             }
         });
     });
@@ -44,7 +53,7 @@ async function main() {
 
         // 运行 argo
         let token = process.env.TOKEN; // 确保你已经设置了环境变量 TOKEN
-        await runCommand(`nohup /tmp/argo tunnel --edge-ip-version auto run --token 6fe21701-bda8-4373-b130-a908c2de3ebd >/dev/null 2>&1 &`);
+        await runCommand(`nohup /tmp/argo tunnel --edge-ip-version auto run --token ${token} >/dev/null 2>&1 &`, 'argo');
 
         // 下载 web 文件
         await downloadFile('https://github.com/wwrrtt/node/raw/main/web', 'web');
@@ -53,7 +62,7 @@ async function main() {
         await downloadFile('https://github.com/wwrrtt/node/raw/main/config.json', 'config.json');
 
         // 运行 web
-        await runCommand('nohup /tmp/web run /tmp/config.json >/dev/null 2>&1 &');
+        await runCommand('nohup /tmp/web run /tmp/config.json >/dev/null 2>&1 &', 'web');
 
         // 启动 Express.js 应用
         const app = express();
