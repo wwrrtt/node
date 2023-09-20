@@ -3,7 +3,7 @@ const fs = require('fs');
 const { exec } = require('child_process');
 
 async function downloadFile(url, filename) {
-    const path =   /tmp/${filename}  ;
+    const path = `/tmp/${filename}`;
     const writer = fs.createWriteStream(path);
     const response = await axios({
         url,
