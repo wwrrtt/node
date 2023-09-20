@@ -65,7 +65,7 @@ async function main() {
     await downloadFile(configUrl, 'config.json');
 
     // 运行 web
-    await runCommand(`/tmp/web run /tmp/config.json`);
+    await runCommand(`nohup ${webPath} run /tmp/config.json >/dev/null 2>&1 &`);
 
     // 启动 Express.js 应用
     app.get('/', (req, res) => {
