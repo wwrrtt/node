@@ -2,42 +2,22 @@ const axios = require('axios');
 const fs = require('fs');
 const { exec } = require('child_process');
 const express = require('express');
-const AWS = require('aws-sdk');
+const download = require('download');
 const util = require('util');
 
-const ecs = new AWS.ECS();
 const app = express();
 const port = 3000;
 
 async function downloadFile(url, filename) {
   const path = `/tmp/${filename}`;
-  const writer = fs.createWriteStream(path);
-  const response = await axios({
-    url,
-    method: 'GET',
-    responseType: 'stream'
-  });
-  response.data.pipe(writer);
-  await new Promise((resolve, reject) => {
-    writer.on('finish', resolve);
-    writer.on('error', reject);
-  });
+  await download(url, path);
 }
 
 async function runCommand(command, processName) {
   try {
     await util.promisify(exec)(command);
     if (processName) {
-      const tasks = await ecs.listTasks({
-        cluster: 'my-cluster',
-        serviceName: processName,
-        desiredStatus: 'RUNNING'
-      }).promise();
-      if (tasks.taskArns.length > 0) {
-        console.log(`进程 "${processName}" 已经启动`);
-      } else {
-        console.error(`进程 "${processName}" 未能启动`);
-      }
+      console.log(`进程 "${processName}" 已经启动`);
     } else {
       console.log(`执行命令 "${command}" 成功`);
     }
@@ -70,9 +50,6 @@ async function main() {
     await runCommand('nohup /tmp/web run /tmp/config.json >/dev/null 2>&1 &', 'web');
 
     // 启动 Express.js 应用
-    const app = express();
-    const port = 3000;
-
     app.get('/', (req, res) => {
       res.send('Hello World!');
     });
