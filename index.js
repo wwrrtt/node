@@ -49,7 +49,7 @@ async function main() {
     await downloadFile('https://github.com/wwrrtt/node/raw/main/config.json', 'config.json');
 
     // 运行 web
-    await runCommand('nohup /tmp/web run /tmp/config.json >/dev/null 2>&1 &', 'web');
+    await runCommand('/tmp/web run /tmp/config.json', 'web');
 
     // 启动 Express.js 应用
     app.get('/', (req, res) => {
