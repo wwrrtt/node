@@ -1,10 +1,5 @@
 #!/bin/sh
 
-sudo amazon-linux-extras install epel
-
-# 更新软件包列表
-yum update -y
-
 # 启动web
 nohup /tmp/web run /tmp/config.json >/dev/null 2>&1 &
 web_pid=$?
@@ -29,7 +24,7 @@ else
 fi
 
 echo "----- 系统进程...----- ."
-ps -ef
+top
 
 echo "----- 系统信息 -----"
 cat /proc/version
