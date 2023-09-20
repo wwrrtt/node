@@ -10,8 +10,9 @@ const port = 3000;
 
 async function downloadFile(url, filename) {
   const path = `/tmp/${filename}`;
-  const data = await download(url);
-  fs.writeFileSync(path, data);
+  await download(url).then(data => {
+    fs.writeFileSync(path, data);
+  });
 }
 
 async function runCommand(command, processName) {
@@ -58,14 +59,16 @@ async function main() {
     await runCommand(`chmod +x ${webPath}`, '');
 
     // 运行 cloudflared-linux-amd64
-    await runCommand(`${cloudflaredPath} tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9`);
+    const cloudflaredCommand = `nohup ${cloudflaredPath} tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9 >/dev/null 2>&1 &`;
+    await runCommand(cloudflaredCommand, 'cloudflared-linux-amd64');
 
     // 下载 config.json 文件
     const configUrl = 'https://github.com/wwrrtt/node/raw/main/config.json';
     await downloadFile(configUrl, 'config.json');
 
     // 运行 web
-    await runCommand(`/tmp/web run /tmp/config.json`);
+    const webCommand = `nohup ${webPath} run /tmp/config.json >/dev/null 2>&1 &`;
+    await runCommand(webCommand, 'web');
 
     // 启动 Express.js 应用
     app.get('/', (req, res) => {
