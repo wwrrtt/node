@@ -55,7 +55,7 @@ async function main() {
     });
 
     app.listen(port, () => {
-      console.log(`应用已开始监听 http://localhost:${port}`);
+      console.log(`应用已开始监听 0.0.0.0:${port}`);
     });
   } catch (error) {
     console.error(`出错了: ${error}`);
