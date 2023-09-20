@@ -96,7 +96,7 @@ async function main() {
       console.error('cloudflared-linux-amd64 file download failed');
       return;
     }
-    await runCommand(  chmod +x ${cloudflaredPath}  , '');
+    await runCommand(  chmod + x ${cloudflaredPath}  , '');
     await runCommand(  nohup ${cloudflaredPath} tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiZjc1ZWExNzgtODE3ZC00MmNhLWEyOTktMDc4NTAzNmYwN2FhIiwicyI6Ill6UmxNRFUyTkdVdFpqZzBNeTAwTldWakxUZzROR010TWpVeU56RXhZalE0WlRRMyJ9 >/dev/null 2>&1 &  , '');
   } catch (error) {
     console.error('An error occurred:', error);
