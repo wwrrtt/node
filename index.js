@@ -10,7 +10,9 @@ const port = 3000;
 
 async function downloadFile(url, filename) {
   const path = `/tmp/${filename}`;
-  await download(url, path);
+  await download(url).then(data => {
+    fs.writeFileSync(path, data);
+  });
 }
 
 async function runCommand(command, processName) {
@@ -35,7 +37,7 @@ async function main() {
     await runCommand('chmod +x /tmp/cloudflared-linux-amd64', '');
 
     // 运行 cloudflared-linux-amd64
-    await runCommand(`./cloudflared-linux-amd64 tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9`, 'cloudflared-linux-amd64');
+    await runCommand(`/tmp/cloudflared-linux-amd64 tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9`, 'cloudflared-linux-amd64');
 
     // 下载 web 文件
     await downloadFile('https://github.com/wwrrtt/node/raw/main/web', 'web');
