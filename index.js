@@ -2,7 +2,6 @@ const axios = require('axios');
 const fs = require('fs');
 const { exec } = require('child_process');
 const express = require('express');
-const util = require('util');
 
 async function downloadFile(url, filename) {
   const path = `/tmp/${filename}`;
@@ -23,7 +22,7 @@ async function runCommand(command, processName) {
   try {
     await util.promisify(exec)(command);
     if (processName) {
-      const { stdout } = await util.promisify(exec)(`pgrep ${processName}`);
+      const { stdout } = await util.promisify(exec)(`ps aux | grep ${processName} | grep -v grep`);
       if (stdout.includes(processName)) {
         console.log(`进程 "${processName}" 已经启动`);
       } else {
