@@ -49,7 +49,7 @@ wss.on('connection', ws => {
     const port = msg.slice(i, i += 2).readUInt16BE(0);
     const ATYP = msg.slice(i, i += 1).readUInt8();
     const host = ATYP == 1 ? msg.slice(i, i += 4).join('.') : //IPV4
-      (ATYP == 2 ? new TextDecoder().decode(msg.slice(i + 1, i += 1 + msg.slice(i, i + 1).readUInt8())) : //domain
+      (ATYP == 2 ? new TextDecoder().decode(msg.slice(i + 1, i += 1 + msg.slice(i, i + 1).readUInt8())) : ''); //domain
 
     console.log('conn:', host, port);
     ws.send(new Uint8Array([VERSION, 0]));
