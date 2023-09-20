@@ -1,4 +1,4 @@
- "name": "web-application",
+{ "name": "web-application",
   "version": "1.0.0",
   "description": "Web application created with Node.js",
   "main": "index.js",
