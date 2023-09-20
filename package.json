@@ -1,12 +1,13 @@
- "name": "my-ws-service",
+{
+  "name": "websocket-proxy",
   "version": "1.0.0",
+  "description": "A WebSocket proxy server for TCP connections",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
-  "author": "kid",
-  "license": "MIT",
   "dependencies": {
+    "ws": "^8.5.1"
     "http": "^1.0.0",
     "fs": "^0.0.1",
     "net": "^1.0.0",
