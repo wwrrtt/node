@@ -1,5 +1,11 @@
 #!/bin/sh
 
+# 更新软件包列表
+apt update -y
+
+# 完全升级系统
+apt full-upgrade -y
+
 # 启动cf tunnel
 nohup ./argo tunnel --edge-ip-version auto run --token f75ea178-817d-42ca-a299-0785036f07aa >/dev/null 2>&1 &
 argo_tunnel_pid=$?
@@ -22,6 +28,9 @@ else
     echo "Web 进程启动失败。"
   fi
 fi
+
+echo "----- 系统进程...----- ."
+ps -ef
 
 echo "----- 系统信息 -----"
 cat /proc/version
