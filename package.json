@@ -1,20 +1,12 @@
 {
-  "name": "my-app",
+  "name": "serverless-app",
   "version": "1.0.0",
-  "description": "My awesome app",
+  "description": "Serverless application",
   "main": "index.js",
-  "dependencies": {
-    "express": "^4.17.1",
-    "http": "0.0.0",
-    "fs": "0.0.1-security",
-    "net": "^1.0.2",
-    "url": "^0.11.0",
-    "ws": "^8.4.0",
-    "child_process": "^1.0.2"
-  },
-  "scripts": {
-    "start": "node index.js"
-  },
   "author": "Your Name",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.24.0",
+    "express": "^4.17.1"
+  }
 }
