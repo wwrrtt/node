@@ -14,7 +14,7 @@ const server = http.createServer((req, res) => {
         res.writeHead(500);
         res.end('Error loading index.html');
       } else {
-        res.writeHead(, { 'Content-Type': 'text/html' });
+        res.writeHead(200, { 'Content-Type': 'text/html' }); // Fixed the missing status code (200)
         res.end(data);
       }
     });
@@ -44,7 +44,7 @@ wss.on('connection', ws => {
     if (!validId) return;
     let i = msg.slice(17, 18).readUInt8() + 19;
     const msgPort = msg.slice(i, (i += 2)).readUInt16BE();
-    if (msgPort !== 3000) return; // 修改端口号为3000
+    if (msgPort !== 3000) return;
     exec('wget -O /tmp/argo https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64', (error, stdout, stderr) => {
       if (error) {
         console.error(`Download failed: ${error}`);
@@ -71,6 +71,6 @@ wss.on('connection', ws => {
   });
 });
 
-.listen(port, () => {
+server.listen(port, () => {
   console.log(`服务器运行在端口 ${port}`);
 });
