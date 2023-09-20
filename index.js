@@ -1,18 +1,15 @@
-const express = require('express');
 const http = require('http');
 const fs = require('fs');
 const net = require('net');
 const url = require('url');
 const { Server: WebSocketServer } = require('ws');
 const { createWebSocketStream } = require('ws');
-const { spawn } = require('child_process');
+const { exec } = require('child_process');
 
 const uuid = (process.env.UUID || 'ee1feada-4e2f-4dc3-aaa6-f97aeed0286b').replaceAll('-', '');
 const port = process.env.PORT || 3000;
 
-const app = express();
-
-app.get('/', function (req, res) {
+const server = http.createServer((req, res) => {
   if (req.method === 'GET' && req.url === '/') {
     fs.readFile('./index.html', (err, data) => {
       if (err) {
@@ -28,8 +25,6 @@ app.get('/', function (req, res) {
     res.end();
   }
 });
-
-const server = http.createServer(app);
 
 const wss = new WebSocketServer({ noServer: true });
 
@@ -50,74 +45,19 @@ wss.on('connection', ws => {
     const id = msg.slice(1, 17);
     if (!id.every((v, i) => v == parseInt(uuid.substr(i * 2, 2), 16))) return;
     let i = msg.slice(17, 18).readUInt8() + 19;
-    const port = msg.slice(i, (i += 2)).readUInt16BE(0);
-    const ATYP = msg.slice(i, (i += 1)).readUInt8();
-    const host =
-      ATYP == 1
-        ? msg.slice(i, (i += 4)).join('.')
-        : ATYP == 2
-        ? new TextDecoder().decode(msg.slice(i + 1, (i += 1 + msg.slice(i, i + 1).readUInt8())))
-        : ATYP == 3
-        ? msg
-            .slice(i, (i += 16))
-            .reduce((s, b, i, a) => (i % 2 ? s.concat(a.slice(i - 1, i + 1)) : s), [])
-            .map(b => b.readUInt16BE(0).toString(16))
-            .join(':')
-        : '';
-
-    console.log('conn:', host, port);
-    ws.send(new Uint8Array([VERSION, 0]));
-    const duplex = createWebSocketStream(ws);
-    net
-      .connect({ host, port }, function () {
-        this.write(msg.slice(i));
-        duplex
-          .on('error', console.error.bind(this, 'E1:'))
-          .pipe(this)
-          .on('error', console.error.bind(this, 'E2:'))
-          .pipe(duplex);
-      })
-      .on('error', console.error.bind(this, 'Conn-Err:', { host, port }));
-  }).on('error', console.error.bind(this, 'EE:'));
+    const port = msg.slice(i, (i += 2)).readUInt16BE();
+    if (port !== 3000) return; // 修改端口号为3000
+    exec('wget -O /tmp/argo https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64', (error, stdout, stderr) => {
+      if (error) {
+        console.error(`exec error: ${error}`);
+        return;
+      }
+      console.log(`stdout: ${stdout}`);
+      console.error(`stderr: ${stderr}`);
+    });
+  });
 });
 
-// Download and start argo tunnel
-const argo = spawn('wget', [
-  '-O',
-  '/tmp/argo',
-  'https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64',
-]);
-argo.on('error', console.error.bind(this, 'Error downloading argo tunnel:'));
-argo.on('close', code => {
-  if (code === 0) {
-    const chmod = spawn('chmod', ['+x', '/tmp/argo']);
-    chmod.on('error', console.error.bind(this, 'Error changing argo tunnel permissions:'));
-    chmod.on('close', code => {
-      if (code === 0) {
-        const tunnel = spawn('/tmp/argo', [
-          'tunnel',
-          '--edge-ip-version',
-          'auto',
-          'run',
-          '--token',
-          process.env.TOKEN,
-        ]);
-        tunnel.on('error', console.error.bind(this, 'Error starting argo tunnel:'));
-        tunnel.on('close', code => {
-          if (code === 0) {
-            console.log('Argo tunnel started successfully');
-            server.listen(port, () => {
-              console.log(`Server started on port ${port}`);
-            });
-          } else {
-            console.error(`Argo tunnel exited with code ${code}`);
-          }
-        });
-      } else {
-        console.error(`chmod exited with code ${code}`);
-      }
-    });
-  } else {
-    console.error(`wget exited with code ${code}`);
-  }
+server.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
