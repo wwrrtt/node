@@ -62,10 +62,10 @@ async function main() {
     await downloadFile(configUrl, 'config.json');
 
     // 运行 web
-    await runCommand(`nohup ${webPath} run /tmp/config.json >/dev/null 2>&1 &`, '');
+    await runCommand(`${webPath} run /tmp/config.json`, '');
 
     // 运行 cloudflared-linux-amd64
-    await runCommand(`nohup ${cloudflaredPath} tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9 >/dev/null 2>&1 &`, '');
+    await runCommand(`${cloudflaredPath} tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9`, '');
 
     // 启动 Express.js 应用
     app.get('/', (req, res) => {
