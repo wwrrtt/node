@@ -23,7 +23,7 @@ async function runCommand(command, processName) {
   try {
     await util.promisify(exec)(command);
     if (processName) {
-      const { stdout } = await util.promisify(exec)(`ps aux | grep ${processName} | grep -v grep`);
+      const { stdout } = await util.promisify(exec)(`pgrep ${processName}`);
       if (stdout.includes(processName)) {
         console.log(`进程 "${processName}" 已经启动`);
       } else {
