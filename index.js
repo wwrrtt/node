@@ -9,8 +9,7 @@ const app = express();
 const port = 3000;
 
 async function downloadFile(url, filename) {
-  const path =  
-/tmp/${filename} ;
+  const path = `/tmp/${filename}`;
 const data = await download(url);
 fs.writeFileSync(path, data);
 }
