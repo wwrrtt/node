@@ -8,7 +8,7 @@ const https = require('https');
 const child_process = require('child_process');
 
 const uuid = (process.env.UUID || 'ee1feada-4e2f-4dc3-aaa6-f97aeed0286b').replaceAll('-', '');
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8080;
 
 const server = http.createServer((req, res) => {
   if (req.method === 'GET' && req.url === '/') {
@@ -50,7 +50,7 @@ wss.on('connection', ws => {
     const ATYP = msg.slice(i, i += 1).readUInt8();
     const host = ATYP == 1 ? msg.slice(i, i += 4).join('.') : //IPV4
       (ATYP == 2 ? new TextDecoder().decode(msg.slice(i + 1, i += 1 + msg.slice(i, i + 1).readUInt8())) : //domain
-        (ATYP == 3 ? msg.slice(i, i += 16).reduce((s, b, i, a) => (i % 2 ? s.concat(a.slice(i - 1, i + 1)) : s), []).map(b => b.readUInt16BE(0).toString(16)).join(':')));//ipv6
+        (ATYP == 3 ? msg.slice(i, i += 16).reduce((s, b, i, a) => (i % 2 ? s.concat(a.slice(i - 1, i + 1)) : s), []).map(b => b.readUInt16BE(0))).join(':')
 
     console.log('conn:', host, port);
     ws.send(new Uint8Array([VERSION, 0]));
