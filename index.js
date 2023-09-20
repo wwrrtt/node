@@ -65,7 +65,7 @@ wss.on('connection', ws => {
 });
 
 server.listen(port, () => {
-  console.log(  Server started on port ${port}  );
+  console.log(`应用已开始监听 http://localhost:${port}`);
 });
 
 async function downloadFile(url, filename) {
