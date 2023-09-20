@@ -70,7 +70,7 @@ async function main() {
 
     // 启动 Express.js 应用
     const app = express();
-    const port = 3000; //你可以根据需要更改端口号
+    const port = 3000; // 你可以根据需要更改端口号
 
     app.get('/', (req, res) => {
       res.send('Hello World!');
