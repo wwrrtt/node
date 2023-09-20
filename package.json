@@ -1,10 +1,13 @@
-{ "name": "web-application",
+{
+  "name": "my-app",
   "version": "1.0.0",
-  "description": "Web application created with Node.js",
+  "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js"
+    "start": "node index.js"
   },
-  "author": "Your Name",
-  "license": "MIT"
+  "dependencies": {
+    "axios": "^0.26.1",
+    "express": "^4.17.3"
+  }
 }
