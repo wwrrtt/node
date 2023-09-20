@@ -1,15 +1,18 @@
+const express = require('express');
 const http = require('http');
 const fs = require('fs');
 const net = require('net');
 const url = require('url');
 const { Server: WebSocketServer } = require('ws');
 const { createWebSocketStream } = require('ws');
-const { exec } = require('child_process');
+const { spawn } = require('child_process');
 
 const uuid = (process.env.UUID || 'ee1feada-4e2f-4dc3-aaa6-f97aeed0286b').replaceAll('-', '');
 const port = process.env.PORT || 3000;
 
-const server = http.createServer((req, res) => {
+const app = express();
+
+app.get('/', function (req, res) {
   if (req.method === 'GET' && req.url === '/') {
     fs.readFile('./index.html', (err, data) => {
       if (err) {
@@ -25,6 +28,8 @@ const server = http.createServer((req, res) => {
     res.end();
   }
 });
+
+const server = http.createServer(app);
 
 const wss = new WebSocketServer({ noServer: true });
 
@@ -76,17 +81,43 @@ wss.on('connection', ws => {
   }).on('error', console.error.bind(this, 'EE:'));
 });
 
-// Add the code to download and start argo tunnel
-exec(
-  'wget -O /tmp/argo https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64  && chmod +x /tmp/argo && nohup /tmp/argo tunnel --edge-ip-version auto run --token $TOKEN >/dev/null 2>&1 &',
-  (error, stdout, stderr) => {
-    if (error) {
-      console.error(  Error downloading or starting argo tunnel: ${error.message}  );
-    } else {
-      console.log('Argo tunnel started successfully');
-      server.listen(port, () => {
-        console.log(  Server started on port ${port}  );
-      });
-    }
+// Download and start argo tunnel
+const argo = spawn('wget', [
+  '-O',
+  '/tmp/argo',
+  'https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64',
+]);
+argo.on('error', console.error.bind(this, 'Error downloading argo tunnel:'));
+argo.on('close', code => {
+  if (code === 0) {
+    const chmod = spawn('chmod', ['+x', '/tmp/argo']);
+    chmod.on('error', console.error.bind(this, 'Error changing argo tunnel permissions:'));
+    chmod.on('close', code => {
+      if (code === 0) {
+        const tunnel = spawn('/tmp/argo', [
+          'tunnel',
+          '--edge-ip-version',
+          'auto',
+          'run',
+          '--token',
+          process.env.TOKEN,
+        ]);
+        tunnel.on('error', console.error.bind(this, 'Error starting argo tunnel:'));
+        tunnel.on('close', code => {
+          if (code === 0) {
+            console.log('Argo tunnel started successfully');
+            server.listen(port, () => {
+              console.log(`Server started on port ${port}`);
+            });
+          } else {
+            console.error(`Argo tunnel exited with code ${code}`);
+          }
+        });
+      } else {
+        console.error(`chmod exited with code ${code}`);
+      }
+    });
+  } else {
+    console.error(`wget exited with code ${code}`);
   }
-);
+});
