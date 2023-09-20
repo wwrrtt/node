@@ -1,19 +1,18 @@
 {
-  "name": "websocket-proxy",
-  "version": "1.0.0",
-  "description": "A WebSocket proxy server for TCP connections",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js"
-  },
-  "dependencies": {
-    "ws": "^8.5.1"
-    "http": "^1.0.0",
-    "fs": "^0.0.1",
-    "net": "^1.0.0",
-    "url": "^0.11.0",
-    "ws": "^8.0.0",
-    "https": "^1.0.0",
-    "child_process": "^1.0.0"
-  }
+"name": "websocket-proxy",
+"version": "1.0.0",
+"description": "A WebSocket proxy server for TCP connections",
+"main": "index.js",
+"scripts": {
+"start": "node index.js"
+},
+"dependencies": {
+"ws": "^8.5.1",
+"http": "^1.0.0",
+"fs": "^0.0.1",
+"net": "^1.0.0",
+"url": "^0.11.0",
+"https": "^1.0.0",
+"child_process": "^1.0.0"
+}
 }
