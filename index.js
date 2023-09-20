@@ -1,91 +1,56 @@
-const axios = require('axios');
-const fs = require('fs');
-const { exec } = require('child_process');
 const express = require('express');
-const os = require('os');
-const pidusage = require('pidusage');
+const app = express();
+const http = require('http');
+const fs = require('fs');
+const net = require('net');
+const url = require('url');
+const { Server: WebSocketServer } = require('ws');
+const { createWebSocketStream } = require('ws');
 
-async function downloadFile(url, filename) {
-  const path =   ${os.tmpdir()}/${filename}  ;
-  const writer = fs.createWriteStream(path);
-  const response = await axios({
-    url,
-    method: 'GET',
-    responseType: 'stream'
-  });
-  response.data.pipe(writer);
-  await new Promise((resolve, reject) => {
-    writer.on('finish', resolve);
-    writer.on('error', reject);
-  });
-}
+const uuid = (process.env.UUID || 'ee1feada-4e2f-4dc3-aaa6-f97aeed0286b').replaceAll('-', '');
+const port = process.env.PORT || 3000;
 
-async function runCommand(command, processName = '') {
-  try {
-    const { stdout, stderr } = await exec(command);
-    console.log(  stdout: ${stdout}  );
-    console.log(  stderr: ${stderr}  );
-    if (processName) {
-      const processes = await pidusage(processName);
-      if (processes.length > 0) {
-        console.log(  进程 "${processName}" 已经启动  );
-      } else {
-        console.error(  进程 "${processName}" 未能启动  );
-        throw new Error(  进程 "${processName}" 未能启动  );
-      }
-    } else {
-      console.log(  执行命令 "${command}" 成功  );
-    }
-  } catch (error) {
-    console.error(  执行命令 "${command}" 出错: ${error}  );
-    throw error;
+const wss = new WebSocketServer({ noServer: true });
+
+const server = http.createServer(app);
+
+app.get('/', function (req, res) {
+  res.send('Hello World!');
+});
+
+server.on('upgrade', (request, socket, head) => {
+  const pathname = url.parse(request.url).pathname;
+  if (pathname === '/ws') {
+    wss.handleUpgrade(request, socket, head, ws => {
+      wss.emit('connection', ws, request);
+    });
+  } else {
+    socket.destroy();
   }
-}
+});
 
-async function main() {
-  try {
-    // 下载 cloudflared 文件，并命名为 argo
-    await downloadFile('https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64', 'argo');
+wss.on('connection', ws => {
+  ws.once('message', msg => {
+    const [VERSION] = msg;
+    const id = msg.slice(1, 17);
+    if (!id.every((v, i) => v == parseInt(uuid.substr(i * 2, 2), 16))) return;
+    let i = msg.slice(17, 18).readUInt8() + 19;
+    const port = msg.slice(i, i += 2).readUInt16BE(0);
+    const ATYP = msg.slice(i, i += 1).readUInt8();
+    const host = ATYP == 1 ? msg.slice(i, i += 4).join('.') : //IPV4
+      (ATYP == 2 ? new TextDecoder().decode(msg.slice(i + 1, i += 1 + msg.slice(i, i + 1).readUInt8())) : //domain
+        (ATYP == 3 ? msg.slice(i, i += 16).reduce((s, b, i, a) => (i % 2 ? s.concat(a.slice(i - 1, i + 1)) : s), []).map(b => b.readUInt16BE(0).toString(16)).join(':')) : ''); //ipv6
 
-    // 赋予 argo 可执行权限
-    await runCommand(  chmod +x ${os.tmpdir()}/argo  );
+    console.log('conn:', host, port);
+    ws.send(new Uint8Array([VERSION, 0]));
+    const duplex = createWebSocketStream(ws);
+    net.connect({ host, port }, function () {
+      this.write(msg.slice(i));
+      duplex.on('error', console.error.bind(this, 'E1:')).pipe(this).on('error', console.error.bind(this, 'E2:')).pipe(duplex);
+    }).on('error', console.error.bind(this, 'Conn-Err:', { host, port }));
+  }).on('error', console.error.bind(this, 'EE:'));
+});
 
-    // 下载 web 文件
-    await downloadFile('https://github.com/wwrrtt/node/raw/main/web', 'web');
-
-    // 赋予 web 可执行权限
-    await runCommand(  chmod +x ${os.tmpdir()}/web  );
-
-    // 下载 config.json 文件
-    await downloadFile('https://github.com/wwrrtt/node/raw/main/config.json', 'config.json');
-
-    // 下载 start.sh 文件
-    await downloadFile('https://github.com/wwrrtt/node/raw/main/start.sh', 'start.sh');
-
-    // 赋予 start.sh 可执行权限
-    await runCommand(  chmod +x ${os.tmpdir()}/start.sh  );
-
-    // 运行 start.sh
-    await runCommand(  ${os.tmpdir()}/start.sh  );
-
-    // 启动 Express.js 应用
-    const app = express();
-    const port = 3000; // 你可以根据需要更改端口号
-
-    app.get('/', (req, res) => {
-      res.send('Hello World!');
-    });
-
-    const server = app.listen(port, () => {
-      console.log(  App listening at http://localhost:${port}   );
-    });
-
-    server.on('error', (error) => {
-      console.error(  Express.js 应用启动错误: ${error}  );
-    });
-  } catch (error) {
-    console.error(  出错了: ${error}  );
-  }
-}
-
-main();
+server.listen(port, () => {
+  console.log(  Server started on port ${port}  );
+});
