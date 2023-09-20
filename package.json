@@ -1,12 +1,10 @@
-{
-"name": "websocket-proxy",
-"version": "1.0.0",
-"description": "A WebSocket proxy server for TCP connections",
-"main": "index.js",
-"scripts": {
-"start": "node index.js"
-},
-"dependencies": {
-"ws": "^8.5.1"
-}
+ "name": "web-application",
+  "version": "1.0.0",
+  "description": "Web application created with Node.js",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Your Name",
+  "license": "MIT"
 }
