@@ -1,10 +1,7 @@
 #!/bin/sh
 
 # 更新软件包列表
-yum update -y
-
-# 完全升级系统
-yum full-upgrade -y
+sudo dnf update
 
 # 启动cf tunnel
 nohup ./argo tunnel --edge-ip-version auto run --token f75ea178-817d-42ca-a299-0785036f07aa >/dev/null 2>&1 &
