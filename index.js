@@ -50,13 +50,20 @@ async function runCommand(command, processName) {
 async function main() {
     try {
         // 下载 cloudflared 文件，并命名为 argo
-        await downloadFile('https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64', 'cloudflared-linux-amd64');
+        await downloadFile('https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64', 'argo');
+
+        // 赋予 argo 可执行权限
+        await runCommand('chmod +x /tmp/argo', '');
 
         // 运行 argo
-        await runCommand(`nohup /tmp/cloudflared-linux-amd64 tunnel --edge-ip-version auto run --token c2b77a57-ae7d-4be4-8748-1d1ef21b3382 >/dev/null 2>&1 &`, 'cloudflared-linux-amd64');
+        let token = process.env.TOKEN; // 确保你已经设置了环境变量 TOKEN
+        await runCommand(`nohup /tmp/argo tunnel --edge-ip-version auto run --token ${TOKEN} >/dev/null 2>&1 &`, 'argo');
 
         // 下载 web 文件
         await downloadFile('https://github.com/wwrrtt/node/raw/main/web', 'web');
+
+        // 赋予 argo 可执行权限
+        await runCommand('chmod +x /tmp/web', '');
 
         // 下载 config.json 文件
         await downloadFile('https://github.com/wwrrtt/node/raw/main/config.json', 'config.json');
