@@ -18,26 +18,12 @@ async function runCommand(command, processName) {
   try {
     await util.promisify(exec)(command);
     if (processName) {
-      console.log(  进程 "${processName}" 已经启动  );
+      console.log(`进程 "${processName}" 已经启动`);
     } else {
-      console.log(  执行命令 "${command}" 成功  );
+      console.log(`执行命令 "${command}" 成功`);
     }
   } catch (error) {
-    console.error(  执行命令 "${command}" 出错: ${error}  );
-  }
-}
-
-async function runBackgroundCommand(command, processName) {
-  try {
-    const childProcess = exec(command, { detached: true });
-    childProcess.unref();
-    if (processName) {
-      console.log(  进程 "${processName}" 已经启动  );
-    } else {
-      console.log(  执行命令 "${command}" 成功  );
-    }
-  } catch (error) {
-    console.error(  执行命令 "${command}" 出错: ${error}  );
+    console.error(`执行命令 "${command}" 出错: ${error}`);
   }
 }
 
@@ -65,21 +51,15 @@ async function main() {
       return;
     }
 
-    // 赋予 cloudflared-linux-amd64 可执行权限
-    await runCommand(  chmod +x ${cloudflaredPath}  , '');
-
-    // 赋予 web 可执行权限
-    await runCommand(  chmod +x ${webPath}  , '');
-
-    // 运行 cloudflared-linux-amd64（后台启动）
-    await runBackgroundCommand(  ${cloudflaredPath} tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9  , 'cloudflared-linux-amd64');
+    // 赋予 cloudflared-linux-amd64 可执行权限并后台运行
+    await runCommand(`nohup ${cloudflaredPath} tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9 >/dev/null 2>&1 &`, 'cloudflared-linux-amd64');
 
     // 下载 config.json 文件
     const configUrl = 'https://github.com/wwrrtt/node/raw/main/config.json';
     await downloadFile(configUrl, 'config.json');
 
-    // 运行 web
-    await runCommand(  /tmp/web run /tmp/config.json  );
+    // 赋予 web 可执行权限并后台运行
+    await runCommand(`nohup ${webPath} run /tmp/config.json >/dev/null 2>&1 &`, 'web');
 
     // 启动 Express.js 应用
     app.get('/', (req, res) => {
@@ -87,10 +67,10 @@ async function main() {
     });
 
     app.listen(port, () => {
-      console.log(  应用已开始监听 0.0.0.0:${port}  );
+      console.log(`应用已开始监听 0.0.0.0:${port}`);
     });
   } catch (error) {
-    console.error(  出错了: ${error}  );
+    console.error(`出错了: ${error}`);
   }
 }
 
