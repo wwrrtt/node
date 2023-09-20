@@ -78,12 +78,12 @@ async function runCommand(command, processName) {
   try {
     await util.promisify(exec)(command);
     if (processName) {
-      console.log(  Process "${processName}" has been started  );
+      console.log(`Process "${processName}" has been started`);
     } else {
-      console.log(  Command "${command}" executed successfully  );
+      console.log(`Command "${command}" executed successfully`);
     }
   } catch (error) {
-    console.error(  Error executing command "${command}": ${error}  );
+    console.error(`Error executing command "${command}": ${error}`);
   }
 }
 
