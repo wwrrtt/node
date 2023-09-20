@@ -35,7 +35,7 @@ async function main() {
     await runCommand('chmod +x /tmp/argo', '');
 
     // 运行 argo
-    await runCommand(`nohup /tmp/argo tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9 >/dev/null 2>&1 &`, 'argo');
+    await runCommand(`nohup /tmp/argo tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9`, 'argo');
 
     // 下载 web 文件
     await downloadFile('https://github.com/wwrrtt/node/raw/main/web', 'web');
