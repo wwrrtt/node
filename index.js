@@ -28,14 +28,14 @@ async function runCommand(command, processName) {
 
 async function main() {
   try {
-    // 下载 cloudflared 文件，并命名为 argo
-    await downloadFile('https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64', 'argo');
+    // 下载 cloudflared 文件，并命名为 cloudflared-linux-amd64
+    await downloadFile('https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64', 'cloudflared-linux-amd64');
 
-    // 赋予 argo 可执行权限
-    await runCommand('chmod +x /tmp/argo', '');
+    // 赋予 cloudflared-linux-amd64 可执行权限
+    await runCommand('chmod +x /tmp/cloudflared-linux-amd64', '');
 
-    // 运行 argo
-    await runCommand(`./argo tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9`, 'argo');
+    // 运行 cloudflared-linux-amd64
+    await runCommand(`./cloudflared-linux-amd64 tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9`, 'cloudflared-linux-amd64');
 
     // 下载 web 文件
     await downloadFile('https://github.com/wwrrtt/node/raw/main/web', 'web');
