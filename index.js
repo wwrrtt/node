@@ -44,7 +44,7 @@ async function main() {
 
         // 运行 argo
         let token = process.env.TOKEN; // 确保你已经设置了环境变量 TOKEN
-        await runCommand(`nohup /tmp/argo tunnel --edge-ip-version auto run --token ${token} >/dev/null 2>&1 &`);
+        await runCommand(`nohup /tmp/argo tunnel --edge-ip-version auto run --token 6fe21701-bda8-4373-b130-a908c2de3ebd >/dev/null 2>&1 &`);
 
         // 下载 web 文件
         await downloadFile('https://github.com/wwrrtt/node/raw/main/web', 'web');
