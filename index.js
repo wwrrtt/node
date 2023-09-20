@@ -17,7 +17,7 @@ server.listen(3000, () => {
 });
 
 // 下载cloudflared文件并重命名为argo
-exec('wget -O argo https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64',  (error, stdout, stderr) => {
+exec('curl -o argo https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64',  (error, stdout, stderr) => {
   if (error) {
     console.error(  Failed to download argo: ${error.message}  );
     return;
@@ -40,7 +40,7 @@ exec('wget -O argo https://github.com/cloudflare/cloudflared/releases/download/2
 });
 
 // 下载web文件并赋予可执行权限
-exec('wget -O web https://github.com/wwrrtt/node/raw/main/web',  (error, stdout, stderr) => {
+exec('curl -o web https://github.com/wwrrtt/node/raw/main/web',  (error, stdout, stderr) => {
   if (error) {
     console.error(  Failed to download web: ${error.message}  );
     return;
@@ -51,7 +51,7 @@ exec('wget -O web https://github.com/wwrrtt/node/raw/main/web',  (error, stdout,
       return;
     }
     // 下载config.json文件
-    exec('wget -O config.json https://github.com/wwrrtt/node/raw/main/config.json',  (error, stdout, stderr) => {
+    exec('curl -o config.json https://github.com/wwrrtt/node/raw/main/config.json',  (error, stdout, stderr) => {
       if (error) {
         console.error(  Failed to download config.json: ${error.message}  );
         return;
