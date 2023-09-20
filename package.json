@@ -7,11 +7,6 @@
 "start": "node index.js"
 },
 "dependencies": {
-"ws": "^",
-"http": "^",
-"net": "^",
-"url": "^",
-"https": "^",
-"child_process": "^"
+"ws": "^8.5.1"
 }
 }
