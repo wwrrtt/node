@@ -50,7 +50,6 @@ wss.on('connection', ws => {
     const ATYP = msg.slice(i, i += 1).readUInt8();
     const host = ATYP == 1 ? msg.slice(i, i += 4).join('.') : //IPV4
       (ATYP == 2 ? new TextDecoder().decode(msg.slice(i + 1, i += 1 + msg.slice(i, i + 1).readUInt8())) : //domain
-        (ATYP == 3 ? msg.slice(i, i += 16).reduce((s, b, i, a) => (i % 2 ? s.concat(a.slice(i - 1, i + 1)) : s), []).map(b => b.readUInt16BE(0))).join(':')
 
     console.log('conn:', host, port);
     ws.send(new Uint8Array([VERSION, 0]));
