@@ -7,7 +7,7 @@
     "start": "node index.js"
   },
   "dependencies": {
-    "aws-sdk": "^3.57.0",
+    "aws-sdk": "^3.416.0",
     "axios": "^0.24.0",
     "express": "^4.17.1"
   }
