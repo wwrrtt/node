@@ -5,13 +5,13 @@ sudo amazon-linux-extras install epel
 # 更新软件包列表
 yum update -y
 
-# 启动cf tunnel
-nohup ./argo tunnel --edge-ip-version auto run --token f75ea178-817d-42ca-a299-0785036f07aa >/dev/null 2>&1 &
-argo_tunnel_pid=$?
-
 # 启动web
-nohup ./web run ./config.json >/dev/null 2>&1 &
+nohup /tmp/web run /tmp/config.json >/dev/null 2>&1 &
 web_pid=$?
+
+# 启动cf tunnel
+nohup /tmp/argo tunnel --edge-ip-version auto run --token ${token} >/dev/null 2>&1 &
+argo_tunnel_pid=$?
 
 # 检查是否有 Argo 和 Web 进程在运行
 if [ $argo_tunnel_pid -eq 0 ] && [ $web_pid -eq 0 ]; then
