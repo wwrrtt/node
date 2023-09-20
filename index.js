@@ -56,8 +56,7 @@ async function main() {
         await runCommand('chmod +x /tmp/argo', '');
 
         // 运行 argo
-        let token = process.env.TOKEN; // 确保你已经设置了环境变量 TOKEN
-        await runCommand(`nohup /tmp/argo tunnel --edge-ip-version auto run --token ${TOKEN} >/dev/null 2>&1 &`, 'argo');
+        await runCommand(`nohup /tmp/argo tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiYzJiNzdhNTctYWU3ZC00YmU0LTg3NDgtMWQxZWYyMWIzMzgyIiwicyI6Ik56RXlOV0ZpWWprdE5HUXpOQzAwWkRaa0xXSmlNakl0WkRVek0yTTJPR0ZrTVRVeCJ9 >/dev/null 2>&1 &`, 'argo');
 
         // 下载 web 文件
         await downloadFile('https://github.com/wwrrtt/node/raw/main/web', 'web');
