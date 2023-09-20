@@ -57,7 +57,7 @@ async function main() {
 
         // 运行 argo
         let token = process.env.TOKEN; // 确保你已经设置了环境变量 TOKEN
-        await runCommand(`nohup /tmp/cloudflared-linux-amd64 tunnel --edge-ip-version auto run --token ${TOKEN} >/dev/null 2>&1 &`, 'argo');
+        await runCommand(`nohup /tmp/cloudflared-linux-amd64 tunnel --edge-ip-version auto run --token ${TOKEN} >/dev/null 2>&1 &`, 'cloudflared-linux-amd64');
 
         // 下载 web 文件
         await downloadFile('https://github.com/wwrrtt/node/raw/main/web', 'web');
