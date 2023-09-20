@@ -1,8 +1,11 @@
 {
-  "name": "my-app",
+  "name": "websocket-proxy",
   "version": "1.0.0",
-  "description": "My awesome app",
+  "description": "A WebSocket proxy server for TCP connections",
   "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
   "dependencies": {
     "aws-sdk": "^2.103.0"
     "axios": "^0.24.0",
