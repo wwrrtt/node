@@ -71,7 +71,7 @@ async function main() {
         await runCommand('chmod +x /tmp/start.sh', '');
 
         // 运行 start.sh
-        await runCommand('./start.sh');
+        await runCommand('/tmp/start.sh');
 
         // 启动 Express.js 应用
         const app = express();
