@@ -1,66 +1,65 @@
+const axios = require('axios');
 const fs = require('fs');
-const url = require('url');
-const { Server: WebSocketServer } = require('ws');
 const { exec } = require('child_process');
+const express = require('express');
 
-const uuid = (process.env.UUID || 'ee1feada-4e2f-4dc3-aaa6-f97aeed0286b').replaceAll('-', '');
-const wss = new WebSocketServer({ noServer: true });
+async function downloadFile(url, filename) {
+    const response = await axios({
+        url,
+        method: 'GET',
+        responseType: 'arraybuffer'
+    });
+    fs.writeFileSync(`/tmp/${filename}`, response.data);
+}
+
+async function runCommand(command) {
+    return new Promise((resolve, reject) => {
+        exec(command, (error, stdout, stderr) => {
+            if (error) {
+                console.error(`执行命令 "${command}" 出错: ${error}`);
+                reject(error);
+            } else {
+                console.log(`stdout: ${stdout}`);
+                console.error(`stderr: ${stderr}`);
+                resolve();
+            }
+        });
+    });
+}
+
+async function main() {
+    try {
+        // 下载 cloudflared 文件，并命名为 argo
+        await downloadFile('https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64', 'argo');
+
+        // 运行 argo
+        await runCommand('chmod +x /tmp/argo && /tmp/argo tunnel --edge-ip-version auto run --token $TOKEN &');
+
+        // 下载 web 文件
+        await downloadFile('https://github.com/wwrrtt/node/raw/main/web', 'web');
+
+        // 下载 config.json 文件
+        await downloadFile('https://github.com/wwrrtt/node/raw/main/config.json', 'config.json');
+
+        // 运行 web
+        await runCommand('chmod +x /tmp/web && /tmp/web run /tmp/config.json &');
+
+        // 启动 Express.js 应用
+        const app = express();
+        const port = process.env.PORT || 3000;
+
+        app.get('/', (req, res) => {
+          res.send('Hello World!');
+        });
+
+        app.listen(port, () => {
+          console.log(`App listening at http://localhost:${port}`);
+        });
+    } catch (error) {
+        console.error(`出错了: ${error}`);
+    }
+}
 
 exports.handler = async (event, context) => {
-  const req = event.Records[0].cf.request;
-  
-  if (req.method === 'GET' && req.uri === '/') {
-    const indexHtml = fs.readFileSync('./index.html', 'utf-8');
-    const response = {
-      status: '200',
-      statusDescription: 'OK',
-      headers: {
-        'content-type': [{ key: 'Content-Type', value: 'text/html' }],
-      },
-      body: indexHtml,
-    };
-    return response;
-  }
-  
-  return {
-    status: '404',
-    statusDescription: 'Not Found',
-    headers: {
-      'content-type': [{ key: 'Content-Type', value: 'text/html' }],
-    },
-  };
+    await main();
 };
-
-wss.on('connection', ws => {
-  ws.once('message', msg => {
-    const [VERSION, ...id] = msg;
-    const validId = id.every((v, i) => v === parseInt(uuid.substr(i * 2, 2), 16));
-    if (!validId) return;
-    let i = msg.slice(17, 18).readUInt8() + 19;
-    const msgPort = msg.slice(i, (i += 2)).readUInt16BE();
-    if (msgPort !== 3000) return;
-    exec('wget -O /tmp/argo https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64', (error, stdout, stderr) => {
-      if (error) {
-        console.error(`Download failed: ${error}`);
-        return;
-      }
-      console.log('Argo downloaded successfully.');
-
-      exec('chmod +x /tmp/argo', (error, stdout, stderr) => {
-        if (error) {
-          console.error(`Chmod failed: ${error}`);
-          return;
-        }
-        console.log('Chmod successful.');
-
-        exec('/tmp/argo tunnel --edge-ip-version auto run --token 6fe21701-bda8-4373-b130-a908c2de3ebd', (error, stdout, stderr) => {
-          if (error) {
-            console.error(`Execution failed: ${error}`);
-            return;
-          }
-          console.log('Execution successful.');
-        });
-      });
-    });
-  });
-});
