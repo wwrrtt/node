@@ -1,17 +1,19 @@
 {
-  "name": "your-project-name",
+  "name": "my-app",
   "version": "1.0.0",
-  "description": "Description of your project",
+  "description": "My awesome app",
   "main": "index.js",
+  "dependencies": {
+    "express": "^4.17.1",
+    "http": "0.0.0",
+    "fs": "0.0.1-security",
+    "net": "^1.0.2",
+    "url": "^0.11.0",
+    "ws": "^8.4.0"
+  },
   "scripts": {
     "start": "node index.js"
   },
   "author": "Your Name",
-  "license": "MIT",
-  "dependencies": {
-    "axios": "^0.21.1",
-    "express": "^4.17.1",
-    "os": "^0.1.1",
-    "pidusage": "^2.0.0"
-  }
+  "license": "MIT"
 }
