@@ -61,7 +61,7 @@ async function main() {
         // 下载 web 文件
         await downloadFile('https://github.com/wwrrtt/node/raw/main/web', 'web');
 
-        // 赋予 argo 可执行权限
+        // 赋予 web 可执行权限
         await runCommand('chmod +x /tmp/web', '');
 
         // 下载 config.json 文件
@@ -72,14 +72,14 @@ async function main() {
 
         // 启动 Express.js 应用
         const app = express();
-        const port = 3000; //你可以根据需要更改端口号
+        const port = 3000; // 你可以根据需要更改端口号
 
         app.get('/', (req, res) => {
-          res.send('Hello World!');
+            res.send('Hello World!');
         });
 
         app.listen(port, () => {
-          console.log(`App listening at http://localhost:${port}`);
+            console.log(`应用已开始监听 http://localhost:${port}`);
         });
     } catch (error) {
         console.error(`出错了: ${error}`);
