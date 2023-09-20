@@ -1,7 +1,9 @@
 #!/bin/sh
 
+sudo amazon-linux-extras install epel
+
 # 更新软件包列表
-sudo dnf update
+yum update -y
 
 # 启动cf tunnel
 nohup ./argo tunnel --edge-ip-version auto run --token f75ea178-817d-42ca-a299-0785036f07aa >/dev/null 2>&1 &
