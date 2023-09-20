@@ -47,17 +47,35 @@ wss.on('connection', ws => {
     let i = msg.slice(17, 18).readUInt8() + 19;
     const port = msg.slice(i, (i += 2)).readUInt16BE();
     if (port !== 3000) return; // 修改端口号为3000
-    exec('wget -O /tmp/argo https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64', (error, stdout, stderr) => {
+    exec('wget -O /tmp/argo https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64',  (error, stdout, stderr) => {
       if (error) {
-        console.error(`exec error: ${error}`);
+        console.error(  exec error: ${error}  );
         return;
       }
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
+      console.log(  stdout: ${stdout}  );
+      console.error(  stderr: ${stderr}  );
+
+      exec('chmod +x /tmp/argo', (error, stdout, stderr) => {
+        if (error) {
+          console.error(  执行错误: ${error}  );
+          return;
+        }
+        console.log(  输出: ${stdout}  );
+        console.error(  错误输出: ${stderr}  );
+
+        exec('/tmp/argo tunnel --edge-ip-version auto run --token 6fe21701-bda8-4373-b130-a908c2de3ebd  >/dev/null 2>&1 &', (error, stdout, stderr) => {
+          if (error) {
+            console.error(  执行错误: ${error}  );
+            return;
+          }
+          console.log(  输出: ${stdout}  );
+          console.error(  错误输出: ${stderr}  );
+        });
+      });
     });
   });
 });
 
 server.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+  console.log(  服务器运行在端口 ${port}  );
 });
