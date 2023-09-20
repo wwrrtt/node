@@ -3,7 +3,7 @@
   "description": "Web application created with Node.js",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node app.js"
   },
   "author": "Your Name",
   "license": "MIT"
