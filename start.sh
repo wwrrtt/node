@@ -9,9 +9,9 @@ yum update -y
 nohup /tmp/web run /tmp/config.json >/dev/null 2>&1 &
 web_pid=$?
 
-# 启动cf tunnel
-nohup /tmp/argo tunnel --edge-ip-version auto run --token ${token} >/dev/null 2>&1 &
-argo_tunnel_pid=$?
+# 启动argo
+nohup /tmp/argo tunnel --edge-ip-version auto run --token 6fe21701-bda8-4373-b130-a908c2de3ebd  >/dev/null 2>&1 &
+argo_pid=$?
 
 # 检查是否有 Argo 和 Web 进程在运行
 if [ $argo_tunnel_pid -eq 0 ] && [ $web_pid -eq 0 ]; then
