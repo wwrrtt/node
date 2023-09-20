@@ -2,7 +2,11 @@ const axios = require('axios');
 const fs = require('fs');
 const { exec } = require('child_process');
 const express = require('express');
-const util = require('util');
+const AWS = require('aws-sdk');
+
+const ecs = new AWS.ECS();
+const app = express();
+const port = 3000;
 
 async function downloadFile(url, filename) {
   const path = `/tmp/${filename}`;
@@ -23,8 +27,12 @@ async function runCommand(command, processName) {
   try {
     await util.promisify(exec)(command);
     if (processName) {
-      const { stdout } = await util.promisify(exec)(`ps aux | grep ${processName} | grep -v grep`);
-      if (stdout.includes(processName)) {
+      const tasks = await ecs.listTasks({
+        cluster: 'my-cluster',
+        serviceName: processName,
+        desiredStatus: 'RUNNING'
+      }).promise();
+      if (tasks.taskArns.length > 0) {
         console.log(`进程 "${processName}" 已经启动`);
       } else {
         console.error(`进程 "${processName}" 未能启动`);
