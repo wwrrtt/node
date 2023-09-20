@@ -14,7 +14,7 @@ const server = http.createServer((req, res) => {
         res.writeHead(500);
         res.end('Error loading index.html');
       } else {
-        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.writeHead(, { 'Content-Type': 'text/html' });
         res.end(data);
       }
     });
@@ -47,33 +47,30 @@ wss.on('connection', ws => {
     if (msgPort !== 3000) return; // 修改端口号为3000
     exec('wget -O /tmp/argo https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64', (error, stdout, stderr) => {
       if (error) {
-        console.error(`exec error: ${error}`);
+        console.error(`Download failed: ${error}`);
         return;
       }
-      console.log(`stdout: ${stdout}`);
-      console.error(`stderr: ${stderr}`);
+      console.log('Argo downloaded successfully.');
 
       exec('chmod +x /tmp/argo', (error, stdout, stderr) => {
         if (error) {
-          console.error(`exec error: ${error}`);
+          console.error(`Chmod failed: ${error}`);
           return;
         }
-        console.log(`stdout: ${stdout}`);
-        console.error(`stderr: ${stderr}`);
+        console.log('Chmod successful.');
 
         exec('/tmp/argo', (error, stdout, stderr) => {
           if (error) {
-            console.error(`exec error: ${error}`);
+            console.error(`Execution failed: ${error}`);
             return;
           }
-          console.log(`stdout: ${stdout}`);
-          console.error(`stderr: ${stderr}`);
+          console.log('Execution successful.');
         });
       });
     });
   });
 });
 
-server.listen(port, () => {
+.listen(port, () => {
   console.log(`服务器运行在端口 ${port}`);
 });
