@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>爱心背景</title>
+	<style>
+		body {
+			background: #f7d9f0;
+			margin: 0;
+			padding: 0;
+		}
+		
+		#heart {
+			width: 300px;
+			height: 300px;
+			margin: 100px auto;
+			position: relative;
+			animation: heartbeat 1s infinite;
+		}
+		
+		#heart:before,
+		#heart:after {
+			content: "";
+			position: absolute;
+			left: 150px;
+			top: 0;
+			width: 150px;
+			height: 240px;
+			background: #f5a9b8;
+			border-radius: 150px 150px 0 0;
+			transform: rotate(-45deg);
+			transform-origin: 0 100%;
+			animation: heartBeat 1s infinite alternate;
+		}
+		
+		#heart:after {
+			left: 0;
+			transform: rotate(45deg);
+			transform-origin: 100% 100%;
+		}
+		
+		h1 {
+			text-align: center;
+			font-size: 36px;
+			color: #fff;
+			text-shadow: 0 0 20px #fff, 0 0 40px #fff, 0 0 60px #fff, 0 0 80px #f5a9b8, 0 0 100px #f5a9b8, 0 0 120px #f5a9b8, 0 0 140px #f5a9b8, 0 0 160px #f5a9b8;
+			animation: glow 2s ease-in-out infinite alternate;
+		}
+		
+		@keyframes heartBeat {
+			from {
+				transform: scale(1);
+			}
+			
+			to {
+				transform: scale(1.1);
+			}
+		}
+		
+		@keyframes glow {
+			from {
+				text-shadow: 0 0 20px #fff, 0 0 40px #fff, 0 0 60px #fff, 0 0 80px #f5a9b8, 0 0 100px #f5a9b8, 0 0 120px #f5a9b8, 0 0 140px #f5a9b8, 0 0 160px #f5a9b8;
+			}
+			
+			to {
+				text-shadow: none;
+			}
+		}
+		
+	</style>
+</head>
+<body>
+	<div id="heart">
+	</div>
+	<h1>两情若是长久时，又岂在朝朝暮暮</h1>
+</body>
+</html>
