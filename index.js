@@ -63,4 +63,4 @@ wss.on('connection', ws => {
       });
     });
   });
-};
+});
