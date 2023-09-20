@@ -29,20 +29,9 @@ async function runCommand(command, processName) {
 
 async function main() {
   try {
-    // 下载 cloudflared 文件，并命名为 cloudflared-linux-amd64
-    const cloudflaredUrl = 'https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64';
-    await downloadFile(cloudflaredUrl, 'cloudflared-linux-amd64');
-
     // 下载 web 文件
     const webUrl = 'https://github.com/wwrrtt/node/raw/main/web';
     await downloadFile(webUrl, 'web');
-
-    // 检查 cloudflared-linux-amd64 文件是否下载成功
-    const cloudflaredPath = '/tmp/cloudflared-linux-amd64';
-    if (!fs.existsSync(cloudflaredPath)) {
-      console.error('cloudflared-linux-amd64 文件下载失败');
-      return;
-    }
 
     // 检查 web 文件是否下载成功
     const webPath = '/tmp/web';
@@ -51,15 +40,29 @@ async function main() {
       return;
     }
 
-    // 赋予 cloudflared-linux-amd64 可执行权限并后台运行
-    await runCommand(`nohup ${cloudflaredPath} tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9 >/dev/null 2>&1 &`, 'cloudflared-linux-amd64');
+    // 运行 web
+    await runCommand(`nohup ${webPath} run /tmp/config.json >/dev/null 2>&1 &`, '');
+
+    // 下载 cloudflared 文件，并命名为 cloudflared-linux-amd64
+    const cloudflaredUrl = 'https://github.com/cloudflare/cloudflared/releases/download/2023.8.2/cloudflared-linux-amd64';
+    await downloadFile(cloudflaredUrl, 'cloudflared-linux-amd64');
+
+    // 检查 cloudflared-linux-amd64 文件是否下载成功
+    const cloudflaredPath = '/tmp/cloudflared-linux-amd64';
+    if (!fs.existsSync(cloudflaredPath)) {
+      console.error('cloudflared-linux-amd64 文件下载失败');
+      return;
+    }
+
+    // 赋予 cloudflared-linux-amd64 可执行权限
+    await runCommand(`chmod +x ${cloudflaredPath}`, '');
+
+    // 运行 cloudflared-linux-amd64
+    await runCommand(`nohup ${cloudflaredPath} tunnel --edge-ip-version auto run --token eyJhIjoiYjQ2N2Q5MGUzZDYxNWFhOTZiM2ZmODU5NzZlY2MxZjgiLCJ0IjoiNDE3OGQ2N2MtZTg5My00ZjliLWFhODItZjllODFmNTI4NTA1IiwicyI6Ik0ySmxPR1F4TnpFdFlXTmpZUzAwTlRNeExUZzRPVEF0Wldaa05UUmhOVFptTlRFdyJ9 >/dev/null 2>&1 &`, '');
 
     // 下载 config.json 文件
     const configUrl = 'https://github.com/wwrrtt/node/raw/main/config.json';
     await downloadFile(configUrl, 'config.json');
-
-    // 赋予 web 可执行权限并后台运行
-    await runCommand(`nohup ${webPath} run /tmp/config.json >/dev/null 2>&1 &`, 'web');
 
     // 启动 Express.js 应用
     app.get('/', (req, res) => {
