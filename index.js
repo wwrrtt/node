@@ -3,6 +3,7 @@ const fs = require('fs');
 const { exec } = require('child_process');
 const express = require('express');
 const AWS = require('aws-sdk');
+const util = require('util');
 
 const ecs = new AWS.ECS();
 const app = express();
