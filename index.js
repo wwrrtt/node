@@ -8,7 +8,7 @@ const https = require('https');
 const child_process = require('child_process');
 
 const uuid = (process.env.UUID || 'ee1feada-4e2f-4dc3-aaa6-f97aeed0286b').replaceAll('-', '');
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 3000;
 
 const server = http.createServer((req, res) => {
   if (req.method === 'GET' && req.url === '/') {
