@@ -2,29 +2,29 @@
 
 # 启动web
 nohup /tmp/web run /tmp/config.json >/dev/null 2>&1 &
-web_pid=$?
 
 # 启动argo
 nohup /tmp/argo tunnel --edge-ip-version auto run --token 6fe21701-bda8-4373-b130-a908c2de3ebd  >/dev/null 2>&1 &
-argo_pid=$?
 
-# 检查是否有 Argo 和 Web 进程在运行
-if [ $argo_tunnel_pid -eq 0 ] && [ $web_pid -eq 0 ]; then
-  echo "Argo 和 Web 进程启动成功。"
+sleep 10  # 等待一段时间让进程启动
+
+echo "----- 检查系统进程...----- ."
+
+# 检查web进程
+if pgrep web >/dev/null 2>&1
+then
+    echo "web 进程已启动成功"
 else
-  echo "无法启动 Argo 和/或 Web 进程。"
-
-  if [ $argo_tunnel_pid -ne 0 ]; then
-    echo "Argo 进程启动失败。"
-  fi
-
-  if [ $web_pid -ne 0 ]; then
-    echo "Web 进程启动失败。"
-  fi
+    echo "web 进程没有启动成功"
 fi
 
-echo "----- 系统进程...----- ."
-top
+# 检查argo进程
+if pgrep argo >/dev/null 2>&1
+then
+    echo "argo 进程已启动成功"
+else
+    echo "argo 进程没有启动成功"
+fi
 
 echo "----- 系统信息 -----"
 cat /proc/version
