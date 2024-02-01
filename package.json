@@ -4,7 +4,8 @@
   "description": "A WebSocket proxy server for TCP connections",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "build": "node index.js"
   },
   "dependencies": {
     "ws": "^8.5.1",
