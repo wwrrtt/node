@@ -14,8 +14,8 @@ env:
   Branches: main
   MainBranch: main
   NPMRegistry: https://registry.npmjs.org/
-  InstallCommand: npm install &amp;&amp; node index.js
-  BuildCommand: npm run build
+  InstallCommand: npm run start
+  BuildCommand: npm install
   Output: ./
 
 jobs:
