@@ -1,0 +1,10 @@
+frontend:
+    path: ./
+    publish: ./
+    scripts:
+        build: npm run start
+        deploy: npm install
+    subdomain: kid
+name: kid
+region: us-east-1
+yamlVersion: 2
